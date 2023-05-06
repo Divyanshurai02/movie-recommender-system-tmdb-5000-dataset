@@ -5,7 +5,13 @@ import requests
 movies_list = pickle.load(open('movies.pkl', 'rb'))
 
 movies_listt = movies_list['title'].values
-similarity = pickle.load(open('similarity.pkl', 'rb'))
+from sklearn.feature_extraction.text import CountVectorizer
+cv = CountVectorizer(max_features=5000,stop_words='english')
+vectors = cv.fit_transform(movies_list['tags']).toarray()
+cv.get_feature_names()
+from sklearn.metrics.pairwise import cosine_similarity
+similarity = cosine_similarity(vectors)
+
 
 
 def f_poster(movie_id):
@@ -30,8 +36,9 @@ def recommend(movie):
 
 
 st.title("Movie Recommender System")
+
 selected_movie_name = st.selectbox(
-    'Find more what you love to watch',
+    'CHOOSE AND GET 4 SIMILAR  MOVIES',
     movies_listt)
 
 
@@ -47,7 +54,6 @@ if st.button('Recommend'):
         st.subheader(names[1])
         st.image(pictures[1])
 
-
     col3, col4= st.columns(2, gap="small")
 
     with col3:
@@ -57,5 +63,4 @@ if st.button('Recommend'):
     with col4:
         st.subheader(names[3])
         st.image(pictures[3])
-
-
+    
